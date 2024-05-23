@@ -12,11 +12,16 @@ contract SimpleNFT is ERC721URIStorage {
 
     function mintNFT(address recipient, string memory tokenURI) public returns (uint256) {
         _tokenIds.increment();
-
         uint256 newItemId = _tokenIds.current();
         _mint(recipient, newItemId);
         _setTokenURI(newItemId, tokenURI);
-
         return newItemId;
+    }
+
+    // Função de queima atualizada
+    function burn(uint256 tokenId) public {
+        // Verifica se o chamador é o dono ou tem permissão para queimar o token
+        require(ownerOf(tokenId) == msg.sender || getApproved(tokenId) == msg.sender || isApprovedForAll(ownerOf(tokenId), msg.sender), "Caller is not owner nor approved");
+        _burn(tokenId);
     }
 }
